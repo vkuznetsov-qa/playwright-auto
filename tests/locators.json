@@ -1,0 +1,20 @@
+{
+    "nameInput": "#name",
+    "ageInput": "#age",
+    "colorSelect": "#color",
+    "subscribeCheckbox": "#subscribe",
+    "submitButton": "#submitBtn",
+    "result": "#result",
+    "resetButton": "#resetBtn",
+    "count": "#count",
+    "incrementBtn": "#incrementBtn",
+    "decrementBtn": "#decrementBtn",
+    "searchInput": "#searchInput",
+    "searchButton": "#searchBtn",
+    "searchResults": "#searchResults",
+    "searchMessage": "#searchMessage",
+    "todoInput": "#todoInput",
+    "addTodoBtn": "#addTodoBtn",
+    "todoItem": ".todo-item",
+    "deleteBtn": ".delete-btn"
+}

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Playwright Test Page</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+    <h1>Playwright Demo</h1>
+
+    <section class="form">
+      <label>Name <input id="name" type="text" placeholder="Enter name"></label>
+      <label>Age <input id="age" type="number" min="0" placeholder="0"></label>
+      <label>Color
+        <select id="color">
+          <option value="red">red</option>
+          <option value="green">green</option>
+          <option value="blue">blue</option>
+        </select>
+      </label>
+      <label><input id="subscribe" type="checkbox"> Subscribe</label>
+
+      <div class="controls">
+        <button id="submitBtn">Send</button>
+        <button id="resetBtn">Reset</button>
+      </div>
+    </section>
+
+    <section class="counter">
+      <button id="incrementBtn">+</button>
+      <button id="decrementBtn">-</button>
+      <span id="count">0</span>
+    </section>
+
+    <section class="search">
+      <input id="searchInput" type="text" placeholder="Search items...">
+      <button id="searchBtn">Search</button>
+      <ul id="searchResults" hidden>
+        <li data-id="1">Apple</li>
+        <li data-id="2">Banana</li>
+        <li data-id="3">Cherry</li>
+        <li data-id="4">Date</li>
+        <li data-id="5">Elderberry</li>
+      </ul>
+      <div id="searchMessage"></div>
+    </section>
+
+    <section class="todo">
+      <h3>Todo List</h3>
+      <input id="todoInput" type="text" placeholder="Add a task...">
+      <button id="addTodoBtn">Add</button>
+      <ul id="todoList"></ul>
+    </section>
+
+    <section class="result" id="result" hidden></section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

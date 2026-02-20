@@ -1,0 +1,24 @@
+:root{font-family:Arial,Helvetica,sans-serif}
+body{background:#f7f9fc;padding:24px}
+main{max-width:720px;margin:0 auto;background:#fff;padding:20px;border-radius:8px;box-shadow:0 4px 14px rgba(0,0,0,.06)}
+h1{margin-top:0}
+h3{margin-top:16px;margin-bottom:8px}
+.form label{display:block;margin:8px 0}
+.controls{margin-top:12px}
+button{padding:8px 12px;margin-right:8px;cursor:pointer;background:#007bff;color:#fff;border:none;border-radius:4px}
+button:hover{background:#0056b3}
+.delete-btn{padding:4px 8px;margin-left:8px;background:#dc3545;font-size:12px}
+.delete-btn:hover{background:#c82333}
+.counter{margin-top:16px}
+#count{font-weight:700;margin-left:8px;margin-right:8px}
+.search{margin-top:16px}
+#searchInput{padding:8px;margin-right:8px;border:1px solid #ccc;border-radius:4px}
+#searchResults{list-style:none;padding:0;margin-top:8px;border:1px solid #ddd;border-radius:4px;max-height:150px;overflow-y:auto}
+#searchResults li{padding:8px;border-bottom:1px solid #eee}
+#searchResults li:last-child{border-bottom:none}
+.search div{margin-top:8px;font-weight:600;color:#666}
+.todo{margin-top:16px}
+#todoInput{padding:8px;margin-right:8px;border:1px solid #ccc;border-radius:4px;width:200px}
+#todoList{list-style:none;padding:0;margin-top:8px}
+.todo-item{padding:8px;background:#f0f0f0;margin:4px 0;border-radius:4px;display:flex;justify-content:space-between;align-items:center}
+.result{margin-top:18px;padding:12px;background:#eef;border-radius:6px}
