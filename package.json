@@ -1,6 +1,6 @@
 {
   "name": "playwright-auto",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Example project of Playwright Web Automation",
   "homepage": "https://github.com/vkuznetsov-qa/playwright-auto#readme",
   "bugs": {
@@ -17,6 +17,6 @@
   "scripts": {},
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "@types/node": "^25.2.3"
+    "@types/node": "^25.3.0"
   }
 }
