@@ -1,157 +1,146 @@
 import { test, expect } from '@playwright/test';
-import { getFileUrl, testID, testAge, testColor, fillForm } from './helpers';
+import { getFileUrl, testID, testAge, testColor } from './helpers';
+import { MainPage } from './pages';
 import * as locators from './locators.json';
 
-const name = `QA Auto ${testID()}`;
-const age = testAge();
-const color = testColor();
+let mainPage: MainPage;
 
-test('form submission and reset', async ({ page }) => {
-  await page.goto(getFileUrl());
+test.beforeEach(async ({ page }) => {
+  mainPage = new MainPage(page);
+  await mainPage.goto(getFileUrl());
+});
+
+test('form submission and reset', async () => {
+  const name = `QA Auto ${testID()}`;
+  const age = testAge();
+  const color = testColor();
+
   // Fill the form with random data
-  await fillForm(page, name, age, color);
+  await mainPage.fillForm(name, age, color, true);
   // Submit the form and verify results
-  await page.click(locators.submitButton);
-  await expect(page.locator(locators.result)).toBeVisible();
-  await expect(page.locator(locators.result)).toContainText(name);
-  await expect(page.locator(locators.result)).toContainText(age);
-  await expect(page.locator(locators.result)).toContainText(color);
-  await expect(page.locator(locators.result)).toContainText('Subscribed');
+  await mainPage.submitForm();
+  await mainPage.expectResultVisible();
+  await mainPage.expectResultContains(name);
+  await mainPage.expectResultContains(age);
+  await mainPage.expectResultContains(color);
+  await mainPage.expectResultContains('Subscribed');
+  
   // Reset the form and verify it is cleared
-  await page.click(locators.resetButton);
-  await expect(page.locator(locators.nameInput)).toHaveValue('');
-  await expect(page.locator(locators.ageInput)).toHaveValue('');
-  await expect(page.locator(locators.subscribeCheckbox)).not.toBeChecked();
-  await expect(page.locator(locators.result)).toBeHidden();
+  await mainPage.resetForm();
+  await mainPage.expectNameInputEmpty();
+  await mainPage.expectAgeInputEmpty();
+  await mainPage.expectSubscribeUnchecked();
+  await mainPage.expectResultHidden();
 });
 
-test('counter increment and decrement', async ({ page }) => {
-  await page.goto(getFileUrl());
+test('counter increment and decrement', async () => {
   // Verify initial count is 0
-  await expect(page.locator(locators.count)).toHaveText('0');
+  await mainPage.expectCounterValue('0');
+  
   // Increment the counter and verify the count updates
-  await page.click(locators.incrementBtn);
-  await expect(page.locator(locators.count)).toHaveText('1');
+  await mainPage.incrementCounter();
+  await mainPage.expectCounterValue('1');
+  
   // Increment the counter multiple times and verify the count updates
-  await page.click(locators.incrementBtn);
-  await page.click(locators.incrementBtn);
-  await expect(page.locator(locators.count)).toHaveText('3');
+  await mainPage.incrementCounter();
+  await mainPage.incrementCounter();
+  await mainPage.expectCounterValue('3');
+  
   // Decrement the counter and verify the count updates
-  await page.click(locators.decrementBtn);
-  await expect(page.locator(locators.count)).toHaveText('2');
+  await mainPage.decrementCounter();
+  await mainPage.expectCounterValue('2');
+  
   // Decrement the counter multiple times and verify the count updates
-  await page.click(locators.decrementBtn);
-  await page.click(locators.decrementBtn);
-  await page.click(locators.decrementBtn);
-  await expect(page.locator(locators.count)).toHaveText('-1');
+  await mainPage.decrementCounter();
+  await mainPage.decrementCounter();
+  await mainPage.decrementCounter();
+  await mainPage.expectCounterValue('-1');
 });
 
-test('search functionality', async ({ page }) => {
-  await page.goto(getFileUrl());
+test('search functionality', async () => {
   // Perform a search and verify results
-  await page.fill(locators.searchInput, 'apple');
-  await page.click(locators.searchButton);
+  await mainPage.performSearch('apple');
   // Verify the search results and message
-  await expect(page.locator(locators.searchResults)).not.toBeHidden();
-  await expect(page.locator(locators.searchMessage)).toContainText('Found 1 result(s)');
+  await mainPage.expectSearchResultsVisible();
+  await mainPage.expectSearchMessageContains('Found 1 result(s)');
   // Verify the specific search result is visible
-  const appleItem = page.locator(`${locators.searchResults} li:has-text("Apple")`);
-  await expect(appleItem).toBeVisible();
+  await mainPage.expectSearchItemVisible('Apple');
   // Verify that non-matching items are not visible
-  const bananaItem = page.locator(`${locators.searchResults} li:has-text("Banana")`);
-  await expect(bananaItem).toBeHidden();
+  await mainPage.expectSearchItemHidden('Banana');
 });
 
-test('search no results', async ({ page }) => {
-  await page.goto(getFileUrl());
+test('search no results', async () => {
   // Perform a search with no matching results
-  await page.fill(locators.searchInput, 'xyz123');
-  await page.click(locators.searchButton);
+  await mainPage.performSearch('xyz123');
   // Verify that no results are found and the appropriate message is displayed
-  await expect(page.locator(locators.searchResults)).toBeHidden();
-  await expect(page.locator(locators.searchMessage)).toContainText('No results found');
+  await mainPage.expectSearchResultsHidden();
+  await mainPage.expectSearchMessageContains('No results found');
 });
 
-test('search multiple results', async ({ page }) => {
-  await page.goto(getFileUrl());
+test('search multiple results', async () => {
   // Perform a search that matches multiple items
-  await page.fill(locators.searchInput, 'e');
-  await page.click(locators.searchButton);
+  await mainPage.performSearch('e');
   // Verify that multiple results are found and the appropriate message is displayed
-  await expect(page.locator(locators.searchMessage)).toContainText('Found 4 result(s)');
-  const items = page.locator(`${locators.searchResults} li`);
-  await expect(items).toHaveCount(5);
+  await mainPage.expectSearchMessageContains('Found 4 result(s)');
+  await mainPage.expectSearchResultsCount(5);
 });
 
-test('search clear', async ({ page }) => {
-  await page.goto(getFileUrl());
+test('search clear', async () => {
   // Perform a search and then clear it
-  await page.fill(locators.searchInput, 'apple');
-  await page.click(locators.searchButton);
-  await expect(page.locator(locators.searchResults)).not.toBeHidden();
+  await mainPage.performSearch('apple');
+  await mainPage.expectSearchResultsVisible();
   // Clear the search input and verify results are hidden
-  await page.fill(locators.searchInput, '');
-  await page.click(locators.searchButton);
+  await mainPage.clearSearch();
   // Verify that search results are hidden and message is cleared
-  await expect(page.locator(locators.searchResults)).toBeHidden();
-  await expect(page.locator(locators.searchMessage)).toHaveText('');
+  await mainPage.expectSearchResultsHidden();
+  await mainPage.expectSearchMessageEmpty();
 });
 
-test('todo add and delete', async ({ page }) => {
-  await page.goto(getFileUrl());
+test('todo add and delete', async () => {
   // Add a todo item and verify it appears in the list
-  await page.fill(locators.todoInput, 'Buy milk');
-  await page.click(locators.addTodoBtn);
+  await mainPage.addTodo('Buy milk');
   // Verify the todo item is added to the list
-  let todoItems = page.locator(locators.todoItem);
-  await expect(todoItems).toHaveCount(1);
-  await expect(todoItems.first()).toContainText('Buy milk');
+  await mainPage.expectTodoCountBe(1);
+  await mainPage.expectTodoItemExists('Buy milk');
+  
   // Add another todo item and verify both items are in the list
-  await page.fill(locators.todoInput, 'Walk the dog');
-  await page.click(locators.addTodoBtn);
+  await mainPage.addTodo('Walk the dog');
   // Verify both todo items are present
-  todoItems = page.locator(locators.todoItem);
-  await expect(todoItems).toHaveCount(2);
+  await mainPage.expectTodoCountBe(2);
+  
   // Delete the first todo item and verify it is removed from the list
-  const deleteBtn = todoItems.first().locator(locators.deleteBtn);
-  await deleteBtn.click();
+  await mainPage.deleteTodo(0);
   // Verify the first todo item is deleted and the second item remains
-  todoItems = page.locator(locators.todoItem);
-  await expect(todoItems).toHaveCount(1);
-  await expect(todoItems.first()).toContainText('Walk the dog');
+  await mainPage.expectTodoCountBe(1);
+  await mainPage.expectTodoItemExists('Walk the dog');
 });
 
 test('todo add with Enter key', async ({ page }) => {
-  await page.goto(getFileUrl());
   // Add a todo item using the Enter key and verify it appears in the list
-  await page.fill(locators.todoInput, 'Complete project');
+  await mainPage.fill(locators.todoInput, 'Complete project');
   await page.press(locators.todoInput, 'Enter');
   // Verify the todo item is added to the list and the input is cleared
-  const todoItems = page.locator(locators.todoItem);
-  await expect(todoItems).toHaveCount(1);
-  await expect(todoItems.first()).toContainText('Complete project');
+  await mainPage.expectTodoCountBe(1);
+  await mainPage.expectTodoItemExists('Complete project');
   await expect(page.locator(locators.todoInput)).toHaveValue('');
 });
 
-test('todo empty input ignored', async ({ page }) => {
-  await page.goto(getFileUrl());
+test('todo empty input ignored', async () => {
   // Attempt to add a todo item with empty input and verify it is not added to the list
-  await page.fill(locators.todoInput, '   ');
-  await page.click(locators.addTodoBtn);
+  await mainPage.fill(locators.todoInput, '   ');
+  await mainPage.click(locators.addTodoBtn);
   // Verify that no todo items are added to the list
-  const todoItems = page.locator(locators.todoItem);
-  await expect(todoItems).toHaveCount(0);
+  await mainPage.expectTodoCountBe(0);
 });
 
-test('counter affects form result', async ({ page }) => {
-  await page.goto(getFileUrl());
+test('counter affects form result', async () => {
   // Increment the counter a few times and then submit the form to verify the count is included in the result
-  await page.click(locators.incrementBtn);
-  await page.click(locators.incrementBtn);
-  await page.click(locators.incrementBtn);
+  await mainPage.incrementCounter();
+  await mainPage.incrementCounter();
+  await mainPage.incrementCounter();
   // Fill the form with random data and submit
-  await page.fill(locators.nameInput, 'Alice');
-  await page.click(locators.submitButton);
+  await mainPage.fill(locators.nameInput, 'Alice');
+  await mainPage.submitForm();
   // Verify that the count from the counter is included in the form submission result
-  await expect(page.locator(locators.result)).toContainText('Count: 3');
+  await mainPage.expectResultContains('Count: 3');
 });
